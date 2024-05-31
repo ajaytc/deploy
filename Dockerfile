@@ -108,7 +108,7 @@ WORKDIR $HOME
 
 ARG FRAPPE_PATH
 ARG FRAPPE_BRANCH
-RUN bench init --frappe-branch main --frappe-path https://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@github.com/ajaytc/modehero_frappe modehero
+RUN bench init --frappe-branch main --frappe-path https://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@github.com/ajaytc/frappe modehero
 # RUN bench init --frappe-branch main \
 # --frappe-path https://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@github.com/modehero/frappe modehero/
 WORKDIR $HOME/modehero
