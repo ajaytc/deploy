@@ -17,7 +17,7 @@ if [ ! -d sites/modehero.com ]; then
     bench use modehero.com
     bench start &
     export start=$!
-    bench get-app erpnext https://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@github.com/kalpit-tech/erpnext --branch main
+    bench get-app erpnext https://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@github.com/ajaytc/modehero_erpnext --branch main
     bench --site modehero.com install-app erpnext
     # rsync -avzh styles sites/assets/css
     rsync -avzh  site-backup/ sites
@@ -43,7 +43,7 @@ else
     bench use modehero.com
     bench start &
     export start=$!
-    bench get-app erpnext https://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@github.com/kalpit-tech/erpnext --branch main
+    bench get-app erpnext https://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@github.com/ajaytc/modehero_erpnext --branch main
     bench --site modehero.com install-app erpnext
     # rsync -avzh styles sites/assets/css
     rsync -avzh  site-backup/ sites
