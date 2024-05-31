@@ -1,0 +1,81 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: mariadb:10.2
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./dbs/my.cnf:/etc/mysql/my.cnf
+      - mariadb:/var/lib/mysql/
+    ports:
+      - "3306:3306"
+    restart: always
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  modehero:
+    depends_on: [db]
+    image: modehero:1.0.0
+    restart: on-failure
+    build:
+      context: .
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+        # - FRAPPE_PATH=${FRAPPE_PATH}
+        - FRAPPE_PATH=https://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@github.com/kalpit-tech/frappe
+        - FRAPPE_BRANCH=${FRAPPE_BRANCH}
+        - UID=${UID}
+        - GID=${GID}
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - DOMAIN=${DOMAIN}
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    # command: tail -F anything
+    # command: /bin/sh -c ./run.sh
+    command: make _start
+    ports:
+      - 8000:8000 # dev bench start and for redis-server we are skipping supervisor.conf for that.
+      - 80:80 # prod
+      - 443:443 # prod
+    volumes:
+      # - modehero:/home/modehero/modehero
+      - ./mysql:/home/modehero/modehero/mysql
+      - ./site-backup:/home/modehero/modehero/site-backup
+      #- ./letsencrypt:/etc/letsencrypt
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+
+#  nginx:
+#    image: nginx:1.15-alpine
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+#    volumes:
+#      - ./nginx/conf.d:/etc/nginx/conf.d
+#      - ./nginx/certbot/conf:/etc/letsencrypt
+#      - ./nginx/certbot/www:/var/www/certbot  
+#    deploy:
+#      restart_policy:
+#        condition: any
+#
+#  certbot:
+#    image: certbot/certbot
+#    volumes:
+#      - ./nginx/certbot/conf:/etc/letsencrypt
+#      - ./nginx/certbot/www:/var/www/certbot
+#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+volumes:
+ mariadb:
+ modehero:
